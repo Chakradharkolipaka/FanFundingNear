@@ -1,0 +1,3 @@
+[workspace]
+members = ["nft_donation"]
+resolver = "2"
