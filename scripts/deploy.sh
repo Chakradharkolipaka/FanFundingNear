@@ -5,7 +5,7 @@ set -e
 # Usage: ./scripts/deploy.sh <account-id>
 # Example: ./scripts/deploy.sh nft-donation.testnet
 
-ACCOUNT_ID=${1:-"nft-donation.testnet"}
+ACCOUNT_ID=${1:-"cleannook9921.testnet"}
 WASM_FILE="./contracts/out/nft_donation.wasm"
 
 echo "🚀 Deploying NFT Donation contract to NEAR Testnet..."

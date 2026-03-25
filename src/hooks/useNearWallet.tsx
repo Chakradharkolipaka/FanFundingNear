@@ -59,6 +59,8 @@ export function NearWalletProvider({ children }: { children: ReactNode }) {
 
   // Initialize wallet selector
   useEffect(() => {
+    let subscription: { unsubscribe: () => void } | null = null;
+
     initWalletSelector()
       .then(({ selector: sel, modal: mod }) => {
         setSelector(sel);
@@ -76,8 +78,8 @@ export function NearWalletProvider({ children }: { children: ReactNode }) {
           }).catch(console.error);
         }
 
-        // Subscribe to account changes
-        sel.store.observable.subscribe((state) => {
+        // Subscribe to account changes and store for cleanup
+        subscription = sel.store.observable.subscribe((state) => {
           setAccounts(state.accounts);
           if (state.selectedWalletId) {
             sel.wallet().then((w) => {
@@ -99,6 +101,11 @@ export function NearWalletProvider({ children }: { children: ReactNode }) {
         console.error("Failed to init wallet selector:", err);
         setIsLoading(false);
       });
+
+    // Cleanup subscription on unmount
+    return () => {
+      subscription?.unsubscribe();
+    };
   }, []);
 
   const accountId = accounts.find((a) => a.active)?.accountId || null;

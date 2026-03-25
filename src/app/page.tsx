@@ -40,6 +40,10 @@ export default function Home() {
   useEffect(() => {
     if (!walletLoading) {
       fetchData();
+
+      // Auto-refresh every 30 seconds
+      const interval = setInterval(fetchData, 30_000);
+      return () => clearInterval(interval);
     }
   }, [walletLoading, fetchData]);
 

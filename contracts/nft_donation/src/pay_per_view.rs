@@ -18,6 +18,7 @@ impl NFTContract {
         assert!(
             deposit >= NearToken::from_yoctonear(nft.view_price),
             "Insufficient payment. Required: {} yoctoNEAR",
+            nft.view_price
         );
 
         // Create a unique key for the viewer's ticket
@@ -42,9 +43,7 @@ impl NFTContract {
 
         env::log_str(&format!(
             "View ticket purchased: {} paid {} yoctoNEAR to watch NFT #{}",
-            viewer,
-            deposit.as_yoctonear(),
-            token_id
+            viewer, deposit.as_yoctonear(), token_id
         ));
 
         ticket

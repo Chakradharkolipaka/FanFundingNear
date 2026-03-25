@@ -19,22 +19,20 @@ impl NFTContract {
         assert!(donor != nft.creator, "Cannot donate to yourself");
 
         // Update donation stats
-        nft.total_donated += deposit.as_yoctonear();
+        let deposit_yocto = deposit.as_yoctonear();
+        nft.total_donated += deposit_yocto;
         nft.donation_count += 1;
         self.nfts.insert(token_id, nft.clone());
 
         // Update global donation counter
-        self.total_donated += deposit.as_yoctonear();
+        self.total_donated += deposit_yocto;
 
         // Transfer the donation to the creator
         Promise::new(nft.creator.clone()).transfer(deposit);
 
         env::log_str(&format!(
             "Donation of {} yoctoNEAR from {} to {} for NFT #{}",
-            deposit.as_yoctonear(),
-            donor,
-            nft.creator,
-            token_id
+            deposit_yocto, donor, nft.creator, token_id
         ));
 
         nft

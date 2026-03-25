@@ -1,6 +1,6 @@
-use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::store::UnorderedMap;
-use near_sdk::{env, near_bindgen, AccountId, PanicOnDefault};
+use near_sdk::borsh::{BorshDeserialize, BorshSerialize};
+use near_sdk::store::IterableMap;
+use near_sdk::{env, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault};
 
 mod types;
 pub use types::*;
@@ -9,15 +9,23 @@ mod donate;
 mod mint;
 mod pay_per_view;
 
+/// Storage keys for UnorderedMap collections
+#[derive(BorshSerialize, BorshStorageKey)]
+#[borsh(crate = "near_sdk::borsh")]
+enum StorageKey {
+    Nfts,
+    ViewTickets,
+}
+
 /// Main contract struct for the NFT Donation platform
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 #[borsh(crate = "near_sdk::borsh")]
 pub struct NFTContract {
     /// All minted NFTs, keyed by token_id
-    pub nfts: UnorderedMap<u64, NFT>,
+    pub nfts: IterableMap<u64, NFT>,
     /// View tickets for pay-per-view videos, keyed by "token_id:viewer_account"
-    pub view_tickets: UnorderedMap<String, ViewTicket>,
+    pub view_tickets: IterableMap<String, ViewTicket>,
     /// Auto-incrementing token ID counter
     pub next_token_id: u64,
     /// Total number of NFTs minted
@@ -35,8 +43,8 @@ impl NFTContract {
     pub fn new() -> Self {
         assert!(!env::state_exists(), "Already initialized");
         Self {
-            nfts: UnorderedMap::new(b"n"),
-            view_tickets: UnorderedMap::new(b"v"),
+            nfts: IterableMap::new(StorageKey::Nfts),
+            view_tickets: IterableMap::new(StorageKey::ViewTickets),
             next_token_id: 1,
             total_nfts: 0,
             total_donated: 0,

@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const PINATA_API_KEY = process.env.PINATA_API_KEY;
-const PINATA_SECRET_KEY = process.env.PINATA_SECRET_KEY;
+const PINATA_JWT = process.env.PINATA_JWT;
 const PINATA_GATEWAY =
   process.env.NEXT_PUBLIC_PINATA_GATEWAY || "https://gateway.pinata.cloud";
 
 export async function POST(request: NextRequest) {
   try {
-    if (!PINATA_API_KEY || !PINATA_SECRET_KEY) {
+    if (!PINATA_JWT) {
       return NextResponse.json(
-        { error: "Pinata API keys not configured" },
+        { error: "Pinata JWT not configured" },
         { status: 500 }
       );
     }
@@ -36,8 +35,7 @@ export async function POST(request: NextRequest) {
       {
         method: "POST",
         headers: {
-          pinata_api_key: PINATA_API_KEY,
-          pinata_secret_api_key: PINATA_SECRET_KEY,
+          Authorization: `Bearer ${PINATA_JWT}`,
         },
         body: fileFormData,
       }
@@ -72,8 +70,7 @@ export async function POST(request: NextRequest) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          pinata_api_key: PINATA_API_KEY,
-          pinata_secret_api_key: PINATA_SECRET_KEY,
+          Authorization: `Bearer ${PINATA_JWT}`,
         },
         body: JSON.stringify({
           pinataContent: metadata,

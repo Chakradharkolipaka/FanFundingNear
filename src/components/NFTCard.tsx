@@ -70,10 +70,19 @@ export function NFTCard({ nft, onDonationSuccess }: NFTCardProps) {
     }
 
     const amount = parseFloat(donateAmount);
-    if (!amount || amount <= 0) {
+    if (!amount || amount < 0.01) {
       toast({
         title: "Invalid amount",
-        description: "Please enter a valid donation amount",
+        description: "Minimum donation is 0.01 NEAR",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (amount > 1000) {
+      toast({
+        title: "Amount too large",
+        description: "Maximum donation is 1000 NEAR",
         variant: "destructive",
       });
       return;

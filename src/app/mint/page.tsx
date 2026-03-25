@@ -29,11 +29,9 @@ export default function MintPage() {
   const [uploadProgress, setUploadProgress] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const selectedFile = e.target.files?.[0];
-      if (!selectedFile) return;
-
+  const validateAndSetFile = useCallback(
+    (selectedFile: File) => {
+      const MAX_SIZE_MB = 50;
       const fileType = selectedFile.type;
       const isVideoFile = fileType.startsWith("video/");
       const isImageFile = fileType.startsWith("image/");
@@ -47,6 +45,15 @@ export default function MintPage() {
         return;
       }
 
+      if (selectedFile.size > MAX_SIZE_MB * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: `Maximum file size is ${MAX_SIZE_MB}MB`,
+          variant: "destructive",
+        });
+        return;
+      }
+
       setFile(selectedFile);
       setIsVideo(isVideoFile);
       setPreview(URL.createObjectURL(selectedFile));
@@ -54,30 +61,23 @@ export default function MintPage() {
     [toast]
   );
 
+  const handleFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const selectedFile = e.target.files?.[0];
+      if (!selectedFile) return;
+      validateAndSetFile(selectedFile);
+    },
+    [validateAndSetFile]
+  );
+
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
       const droppedFile = e.dataTransfer.files?.[0];
       if (!droppedFile) return;
-
-      const fileType = droppedFile.type;
-      const isVideoFile = fileType.startsWith("video/");
-      const isImageFile = fileType.startsWith("image/");
-
-      if (!isVideoFile && !isImageFile) {
-        toast({
-          title: "Invalid file type",
-          description: "Please select an image or video file",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      setFile(droppedFile);
-      setIsVideo(isVideoFile);
-      setPreview(URL.createObjectURL(droppedFile));
+      validateAndSetFile(droppedFile);
     },
-    [toast]
+    [validateAndSetFile]
   );
 
   const handleMint = async () => {

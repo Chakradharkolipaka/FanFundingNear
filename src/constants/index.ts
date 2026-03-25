@@ -2,7 +2,7 @@
 
 export const NEAR_NETWORK = process.env.NEXT_PUBLIC_NEAR_NETWORK || "testnet";
 
-export const CONTRACT_ID = process.env.NEXT_PUBLIC_CONTRACT_ID || "your-contract.testnet";
+export const CONTRACT_ID = process.env.NEXT_PUBLIC_CONTRACT_ID || "cleannook9921.testnet";
 
 export const NEAR_CONFIG = {
   testnet: {

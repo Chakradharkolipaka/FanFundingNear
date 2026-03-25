@@ -90,7 +90,14 @@ export function getAccounts(): AccountState[] {
  */
 export async function signOut(): Promise<void> {
   const wallet = await getWallet();
-  if (wallet) {
+  if (!wallet) {
+    console.warn("signOut called but no wallet is connected");
+    return;
+  }
+  try {
     await wallet.signOut();
+  } catch (err) {
+    console.error("Sign out failed:", err);
+    throw err;
   }
 }
